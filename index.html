@@ -48,13 +48,11 @@
             .catch(error => {
                 console.log(error)
             }).then((result) => {
-                this.repositories = result
-
-                // remove README.md repository
-                let index = this.repositories.findIndex(obj => obj.name == this.username)
-                if (index !== -1) {
-                    this.repositories.splice(index, 1);
-                }
+              this.repositories = result.filter(obj => 
+                obj.name !== this.username
+                && obj.fork === false
+                && obj.name !== `${this.username}.github.io`
+              )
             })
       } }"
       class="container flex items-center justify-center w-screen h-screen mx-auto"
