@@ -94,8 +94,8 @@
                   <li>
                     <a x-bind:href="repository.svn_url" target="_blank" rel="noopener noreferrer">
                       <span x-text="repository.name"></span>
-                      <span class="italic" x-text="'('+repository.language+')'"></span>
                     </a>
+                    <div class="inline py-0.5 px-2 text-xs bg-blue-500 rounded-md w-fit" x-text="repository.language"></div>
                   </li>
                 </div>
               </template>
