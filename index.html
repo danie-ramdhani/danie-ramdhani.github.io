@@ -6,7 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Danie Ramdhani Github Page</title>
 
-    <link href="https://github.com/danie-ramdhani.png?size=400" rel="icon" type="image/x-icon" />
+    <script>
+      const username = "danie-ramdhani";
+    </script>
+    <link x-data x-bind:href="`https:/\/\github.com/${username}.png?size=400`" rel="icon" type="image/x-icon" />
 
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -22,9 +25,9 @@
   </head>
   <body class="overflow-hidden text-white bg-slate-950">
     <div
-      x-data="{ identity: {}, repositories: [], username: 'danie-ramdhani', init(){
-        // fetch identity
-        fetch(`//api.github.com/users/${this.username}`)
+      x-data="{ identity: {}, repositories: [], init(){
+        fetchData = (api) => {
+          return fetch(api)
             .then(response => {
                 if (!response.ok) {
                     throw new Error(response.statusText)
@@ -33,27 +36,24 @@
             })
             .catch(error => {
                 console.log(error)
-            }).then((result) => {
-                this.identity = result
             })
+        }
 
+        // fetch identity
+        fetchData(`/\/\api.github.com/users/${username}`)
+          .then((result) => {
+            this.identity = result
+          })
+          
         // fetch repositories
-        fetch(`//api.github.com/users/${this.username}/repos`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(response.statusText)
-                }
-                return response.json()
-            })
-            .catch(error => {
-                console.log(error)
-            }).then((result) => {
+        fetchData(`/\/\api.github.com/users/${username}/repos`)
+          .then((result) => {
               this.repositories = result.filter(obj => 
-                obj.name !== this.username
-                && obj.fork === false
-                && obj.name !== `${this.username}.github.io`
+                  obj.name !== username
+                  && obj.fork === false
+                  && obj.name !== `${username}.github.io`
               )
-            })
+          })
       } }"
       class="container flex items-center justify-center w-screen h-screen mx-auto"
     >
