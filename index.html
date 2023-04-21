@@ -4,12 +4,9 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Danie Ramdhani Github Page</title>
+    <title x-data="githubApi" x-text="identity.name +' Github Page'"></title>
 
-    <script>
-      const username = "danie-ramdhani";
-    </script>
-    <link x-data x-bind:href="`https:/\/\github.com/${username}.png?size=400`" rel="icon" type="image/x-icon" />
+    <link x-data="githubApi" x-bind:href="identity.avatar_url" rel="icon" type="image/x-icon" />
 
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -22,41 +19,44 @@
     </style>
 
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+      const username = "danie-ramdhani";
+
+      document.addEventListener("alpine:init", () => {
+        Alpine.data("githubApi", () => ({
+          identity: {},
+          repositories: [],
+          init() {
+            fetchData = (api) => {
+              return fetch(api)
+                .then((response) => {
+                  if (!response.ok) {
+                    throw new Error(response.statusText);
+                  }
+                  return response.json();
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
+            };
+            // fetch identity
+            fetchData(`/\/\api.github.com/users/${username}`).then((result) => {
+              this.identity = result;
+            });
+
+            // fetch repositories
+            fetchData(`/\/\api.github.com/users/${username}/repos`).then((result) => {
+              this.repositories = result.filter(
+                (obj) => obj.name !== username && obj.fork === false && obj.name !== `${username}.github.io`
+              );
+            });
+          },
+        }));
+      });
+    </script>
   </head>
   <body class="overflow-hidden text-white bg-slate-950">
-    <div
-      x-data="{ identity: {}, repositories: [], init(){
-        fetchData = (api) => {
-          return fetch(api)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(response.statusText)
-                }
-                return response.json()
-            })
-            .catch(error => {
-                console.log(error)
-            })
-        }
-
-        // fetch identity
-        fetchData(`/\/\api.github.com/users/${username}`)
-          .then((result) => {
-            this.identity = result
-          })
-          
-        // fetch repositories
-        fetchData(`/\/\api.github.com/users/${username}/repos`)
-          .then((result) => {
-              this.repositories = result.filter(obj => 
-                  obj.name !== username
-                  && obj.fork === false
-                  && obj.name !== `${username}.github.io`
-              )
-          })
-      } }"
-      class="container flex items-center justify-center w-screen h-screen mx-auto"
-    >
+    <div x-data="githubApi" class="container flex items-center justify-center w-screen h-screen mx-auto">
       <div
         class="bg-gradient-to-br from-slate-900 from-15% via-slate-800 to-slate-700 rounded-xl p-4 w-[80%] lg:w-[40%] overflow-y-auto max-h-[75%] shadow-[5px_5px_0px_0px] shadow-white"
       >
